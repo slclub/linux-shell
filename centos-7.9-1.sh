@@ -98,3 +98,8 @@ grubby --args="user_namespace.enable=1" --update-kernel="$(grubby --default-kern
 grubby --default-kernel
 
 # reboot
+
+# It is too slow to connect sshd. so do not check the DNS server.
+sed -i 's/UseDNS yes/UseDNS no/g' /etc/ssh/sshd_config
+sed -i 's/#UseDNS/UseDNS/g' /etc/ssh/sshd_config
+
