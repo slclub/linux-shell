@@ -6,6 +6,7 @@ systemctl set-default multi-user.target
 #vim /etc/inittab
 #reboot
 #
+
 #xrandr
 #xrandr -s 3
 
@@ -36,7 +37,8 @@ systemctl disable --now firewalld
 systemctl disable --now dnsmasq
 systemctl disable --now NetworkManager
 setenforce 0
-vi /etc/sysconfig/selinux
+#vi /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disable/g' /etc/sysconfig/selinux
 swapoff  -a && sysctl -w vm.swappiness=0
 
 #date install
@@ -45,11 +47,25 @@ yum install ntp -y
 ln -sf /usr/share/zoneinfo/Asia/Shanghai   /etc/localtime
 echo 'Asia/Shanghai' > /etc/timezone
 ntpdate time2.aliyun.com
-crontab -e
+
+#crontab -e
+# 判断crontab文件夹是否存在
+if [ ! -e /var/spool/cron/ ];then
+  mkdir -p /var/spool/cron/
+fi
+
+
+# 添加定时任务：每天凌晨1点1分停止服务与1点2分启动服务
+if [ `grep -v '^\s*#' /var/spool/cron/root |grep -c 'ntpdate'` -eq 0 ];then
+  echo "*/5 * * * *  ntpdate time2.aliyun.com" >> /var/spool/cron/root
+  #echo "* 1 1 * * sh $install_dir/stop.sh"  >> /var/spool/cron/root
+  #echo "* 2 1 * * sh $install_dir/start.sh" >> /var/spool/cron/root
+fi
+
 # open interface
 ulimit -SHn 65535
 # install normal tools
-yum -y install vim wget net-tools lrzsz
+yum -y install  wget net-tools lrzsz
 
 echo "unset MAILCHECK" >> /etc/profile
 source /etc/profile
