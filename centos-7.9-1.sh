@@ -70,6 +70,11 @@ yum -y install  wget net-tools lrzsz
 echo "unset MAILCHECK" >> /etc/profile
 source /etc/profile
 
+# uninstall yum base repo.
+mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+ls
+
+
 # update yum repo
 ls /etc/yum.repos.d/
 curl -o  /etc/yum.repos.d/Centos-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
@@ -82,9 +87,6 @@ rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
 # search a new  centos7 kernel
 yum --enablerepo="elrepo-kernel" list --showduplicates | sort -r | grep kernel-ml.x86_64
 
-# uninstall yum base repo.
-mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
-ls
 
 # install centos kernel.
 yum --enablerepo="elrepo-kernel" list --showduplicates | sort -r | grep kernel-lt.x86_64
